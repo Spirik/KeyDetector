@@ -4,7 +4,7 @@
   Detects digital pin state change as well.
 
   Can be used to detect key press events that were assigned distinctive levels of the single
-  analog signal ("multiplexed" to analog signal), i.e. by usig DAC to "encode" multiple digital
+  analog signal ("multiplexed" to analog signal), e.g. by usig DAC to "encode" multiple digital
   signals to a single analog line.
 
   For documentation visit:
