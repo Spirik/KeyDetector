@@ -8,7 +8,7 @@
   signals to a single analog line.
 
   For documentation visit:
-  https://github.com/spirik/KeyDetector
+  https://github.com/Spirik/KeyDetector
 
   Created by Alexander 'Spirik' Spiridonov, 11 July 2016
   
