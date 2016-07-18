@@ -59,8 +59,8 @@ Define macro constants (aliases) for the keys you want to detect. These are iden
 Create constants for the pins you want to detect signals on:
 
 ```cpp
-const byte enterPin = 1;
-const byte navPin = A1;
+const byte enterPin = 2;
+const byte navPin = A0;
 ```
 
 Create array of `Key` objects. It will hold information about which button press event should be detected on which input pin and at which level of signal (for multiplexed signals only):
@@ -165,12 +165,14 @@ Key myKeyDigital = {KEY_ID, keyPin}; //For digital pin
   *Default*: `-1`  
   Level of the analog signal at which press event of the multiplexed key is triggered. If not explicitly set by user, default value of `-1`  is assigned and key considered to be digital.
 
+> **Note:** key detection on digital pins works with `pinMode` set to `INPUT` (*not* `INPUT_PULLUP`), so the `HIGH` level of signal means that button is pressed. So, e.g., momentary switches should be wired accordingly, with pulldown resistor.
+
 ### KeyDetector
 
 Class responsible for watching for desired level of signal to occur on specified pin. Holds current and previously detected key/signal identifier. Object of class `KeyDetector` defines as follows:
 
 ```cpp
-KeyDetector myKeyDetector(keysArray, keysArrayLength, analogThreshold, analogDelay);
+KeyDetector myKeyDetector(keysArray, keysArrayLength, analogDelay, analogThreshold);
 ```
 
 * **keysArray**  
@@ -179,17 +181,17 @@ KeyDetector myKeyDetector(keysArray, keysArrayLength, analogThreshold, analogDel
 * **keysArrayLength**  
   *Type*: `byte`  
   Length of `keysArray`. Should be explicitly supplied because array is passed by reference. Easy way to provide array length is to calculate it using the following expression: `sizeof(keysArray)/sizeof(Key)`.
+* **analogDelay** [*optional*]  
+  *Type*: `byte`  
+  *Units*: ms  
+  *Default*: `0`  
+  Delay in ms to account for any transient process that may occur when adjusting the source level of analog signal on transmitting end. Try increasing this value if you are experiencing detection of undesired adjacent signals prior to the detection of the actual signal you're sending. For example, that may be the case when you are using low-pass RC filter on transmitting end to convert PWM signal into analog (due to the temporal nature of the process).
 * **analogThreshold** [*optional*]  
   *Type*: `int`  
   *Default*: `16`  
   Used to form the range of values of analog signal at which press event of the multiplexed key is triggered. E.g. for the signal level of 127 the range of `[127 - analogThreshold + 1 .. 127 + analogThreshold - 1]` will be formed and any signal being in that range will trigger an event. Default value of `16` allows for up to 32 evenly spaced signal levels being multiplexed (e.g. via 5-bit DAC) into single analog line with 10-bit ADC on the receiving end.  
   Increasing this value when less then 32 different levels are required will cause signal detection (key press) event to happen earlier and be in the detection range longer. It may increase stability of detection for the signal with high level of ripple. On the contrary, decreasing `analogThreshold` may cause unreliable detection or multiple sequential detections of the unstable signal.  
   Not used for detection of keys attached to digital pins.
-* **analogDelay** [*optional*]  
-  *Type*: `byte`  
-  *Units*: ms  
-  *Default*: `0`  
-  Delay in ms to account for any transient process that may occur when adjusting the source level of analog signal on transmitting end. Try increasing this value if you are experiencing detection of undesired adjacent signals prior to the detection of the actual signal you're sending. For example, that may be the case when you are using low-pass RC filter on transmitting end to convert PWM signal into analog (due to the temporal nature of the process).
 
 #### Constants
 

@@ -20,11 +20,11 @@
 #include <Arduino.h>
 #include "KeyDetector.h"
 
-KeyDetector::KeyDetector(Key* keys, byte len, int analogThreshold, byte analogDelay) {
+KeyDetector::KeyDetector(Key* keys, byte len, byte analogDelay, int analogThreshold) {
   _keys = keys;
   _len = len;
-  _analogThreshold = analogThreshold;
   _analogDelay = analogDelay;
+  _analogThreshold = analogThreshold;
 }
 
 void KeyDetector::detect() {
@@ -37,19 +37,19 @@ void KeyDetector::detect() {
     if (_keys[i].level > -1) {
       
       // Detect Multiplexed keys (analog signal)
-      val = analogRead(_keys[i].pin);
       if (_analogDelay > 0) {
         delay(_analogDelay);
-        val = analogRead(_keys[i].pin);
       }
-      if (val > _keys[i].level-_analogThreshold+1 && val < _keys[i].level+_analogThreshold-1) {
+      val = analogRead(_keys[i].pin);
+      if (val > _keys[i].level-_analogThreshold && val < _keys[i].level+_analogThreshold) {
         current = _keys[i].code;
         pressed = true;
       }
     
     } else {
       
-      // Detect Solo keys (digital signal)
+      // Detect Solo keys (digital signal),
+      // currently works with buttons (e.g. momentary switches) wired with pulldown resistor only (so the HIGH means that button is pressed)
       if (digitalRead(_keys[i].pin) == HIGH) {
         current = _keys[i].code;
         pressed = true;
