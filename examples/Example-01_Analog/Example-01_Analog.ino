@@ -46,7 +46,7 @@ KeyDetector myKeyDetector(keys, sizeof(keys)/sizeof(Key), 0, 129);
 void setup() {
   Serial.begin(115200);
   
-  //Set potPin to input
+  // Set potPin to input
   pinMode(potPin, INPUT);
 }
 
