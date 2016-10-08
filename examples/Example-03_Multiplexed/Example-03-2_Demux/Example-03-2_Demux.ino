@@ -36,11 +36,7 @@ const byte xPin = A1; // Pin for X axis signal
 const byte yPin = A0; // Pin for Y axis signal
 
 // Create array of Key objects that will link defined key identifiers with dedicated pins
-Key keys[] = {
-  {KEY_UP, kPin, 127}, {KEY_RIGHT, kPin, 255}, {KEY_DOWN, kPin, 383}, {KEY_LEFT, kPin, 511}, {KEY_O, kPin, 639}, {KEY_X, kPin, 767},
-  {KEY_RIGHT, xPin, 1008}, {KEY_LEFT, xPin, 16},
-  {KEY_DOWN, yPin, 1008}, {KEY_UP, yPin, 16}
-  };
+Key keys[] = {{KEY_UP, kPin, 127}, {KEY_RIGHT, kPin, 255}, {KEY_DOWN, kPin, 383}, {KEY_LEFT, kPin, 511}, {KEY_O, kPin, 639}, {KEY_X, kPin, 767}};
 
 // Create KeyDetector object
 KeyDetector key(keys, sizeof(keys)/sizeof(Key));
@@ -66,12 +62,11 @@ void loop() {
   // Get Y value of the stick
   y = analogRead(yPin);
   
-  // Uncomment to print X and Y values. Thresholds (500 and 524) used here help prevent false readings near the mid-point of the range
-  /*if ( (x > 524 && x < 896) || (x < 500 && x > 127) ||
-       (y > 524 && y < 896) || (y < 500 && y > 127) ) {
+  // Print X and Y values. Thresholds (500 and 524) used here help prevent false readings near the mid-point of the range
+  if (x > 524 || x < 500 || y > 524 || y < 500) {
     Serial.print("X: ");    Serial.print(x);
     Serial.print("\tY: ");  Serial.println(y);
-  }*/
+  }
 
   // Check the current state of input signal
   key.detect();
