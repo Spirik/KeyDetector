@@ -7,7 +7,8 @@
   to decodethe signal).
 
   This sketch is using USB Host Shield Library 2.0 to connect to PS3 controller via Bluetooth and
-  should be uploaded to the Arduino (UNO or Pro Mini) with USB Host Shield and supported Bluetooth dongle attached.
+  should be uploaded to the Arduino equipped with ATmega328 (e.g. UNO, Pro Mini) with compatible
+  USB Host Shield and supported Bluetooth dongle attached.
 
   Pressed button of the controller (D-pad keys, cross, or circle) is encoded into binary code and then converted
   into corresponding analog value using simple 3-bit DAC (based on R-2R resistor ladder).

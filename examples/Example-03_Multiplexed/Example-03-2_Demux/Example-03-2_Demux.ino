@@ -3,7 +3,7 @@
   (Listing 1 can be found in "/examples/Example-03_Multiplexed/Example-03-1_Mux" directory).
   
   This part of the example demonstrates how to use KyDetector to decode signals from PS3 controller previously
-  encoded into single analog line (as seen in Listing 2).
+  encoded into single analog line (as seen in Listing 1).
 
   Currently pressed button of the controller (D-pad keys, cross, or circle) will be printed.
 
@@ -46,7 +46,9 @@ KeyDetector key(keys, sizeof(keys)/sizeof(Key));
 // KeyDetector key(keys, sizeof(keys)/sizeof(Key), 0, 24);
 
 void setup() {
+  // Configure the reference voltage used for analog input (i.e. the value used as the top of the input range)
   analogReference(EXTERNAL);
+  
   Serial.begin(115200);
 
   // Set signal pins to input
