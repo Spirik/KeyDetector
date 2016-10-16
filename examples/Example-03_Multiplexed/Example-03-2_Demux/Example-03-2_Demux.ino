@@ -17,7 +17,7 @@
   This example code is in the public domain.
 */
 
-#include "KeyDetector.h"
+#include <KeyDetector.h>
 
 // Define signal identifiers for the buttons
 #define KEY_UP 1

@@ -12,7 +12,7 @@
   This example code is in the public domain.
 */
 
-#include "KeyDetector.h"
+#include <KeyDetector.h>
 
 // Define signal identifiers; in this example, number in KEY_XX may be thought of as a percentage of pot rotation range,
 // e.g. KEY_25 means 25% of the total pot rotation range. The actual value of defined identifier isn't that important most of the time,

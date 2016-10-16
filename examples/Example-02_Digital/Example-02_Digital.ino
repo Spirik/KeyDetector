@@ -10,7 +10,7 @@
   This example code is in the public domain.
 */
 
-#include "KeyDetector.h"
+#include <KeyDetector.h>
 
 // Define signal identifiers for three buttons. The actual value of defined identifier isn't important for this example
 #define KEY_A 1
