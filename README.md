@@ -3,22 +3,23 @@ KeyDetector
 
 Arduino library for detecting state change on analog and digital pins. Listens for specified values on the analog input and sets `KeyDetector` object state accordingly. Detects digital pin state change as well.
 
-Can be used to detect key press events that were assigned distinctive levels of the single analog signal ("multiplexed" to analog signal), e.g. by usig DAC to "encode" multiple digital signals to a single analog line.
+Can be used to detect key press events that were assigned distinctive levels of the single analog signal ("multiplexed" to analog signal), e.g. by using DAC to "encode" multiple digital signals to a single analog line.
 
 * [When to Use](#when-to-use)
 * [How to Use](#how-to-use)
 * [Reference](#reference)
+* [Examples](#examples)
 * [License](#license)
 
 When to use
 -----------
-If you find yourself in a situation when you need to execute some code based on values passed through single analog input. You may want to do that, for example, in case if you are running low on a free pin budget, but still need a way to receive multiple control signals from another Arduino (and don’t want to use Serial or another interface for some reason). Then you use simplest DAC on the end of transmitting Arduino and multiplex the encoded control signals into single analog signal that will be decoded on the receiving Arduino.
+E.g. if you find yourself in a situation when you need to execute some code based on values passed through single analog input. You may want to do that in case if you are running low on a free pin budget, but still need a way to receive multiple control signals from another Arduino (and don’t want to use Serial or another interface for some reason). Then you use simplest DAC on the end of transmitting Arduino and multiplex the encoded control signals into single analog signal that will be decoded on the receiving Arduino. See [Example 3](https://github.com/Spirik/KeyDetector/wiki/Example-03:-Multiplexed-signal-readings) provided with the library to learn how to multiplex digital signals and demultiplex them back using KeyDetector.
 
-And since nature of the analog signal isn’t important for the library, you may use it to detect specific values of any analog source you connect to Arduino, be it some sensor or simple potentiometer. That way you may execute some code based on, e.g., temperature readings of the sensor or rotation of the knob.
+And since nature of the analog signal isn’t important for the library, you may use it to detect specific values of any analog source you connect to Arduino, be it some sensor or simple potentiometer. That way you may execute some code based on, e.g., temperature readings of the sensor or rotation of the knob. See [Example 1](https://github.com/Spirik/KeyDetector/wiki/Example-01:-Analog-signal-readings) provided with the library to learn how to build  absolute rotary encoder using potentiometer and KeyDetector library.
 
 Of course you may do this without any fancy library whatsoever, but KeyDetector will provide you with convenient way of tracking previous reading and executing desired code once per signal change (i.e. once per key press, ignoring the duration of it being in a pressed state).
 
-And it will detect state changes on the digital pins as well.
+And it will detect state changes on the digital pins as well. See [Example 2](https://github.com/Spirik/KeyDetector/wiki/Example-02:-Digital-signal-readings) provided with the library to learn how to detect momentary push-buttons single and continuous presses.
 
 How to use
 -----------
@@ -224,6 +225,10 @@ KeyDetector myKeyDetector(keysArray, keysArrayLength, analogDelay, analogThresho
   Holds the identifier of the button that was pressed when `detect()` method was previously called.
 
 > Each of these properties (`trigger`, `current`, `previous`) ends up storing value of `KEY_NONE` when no press events are detected for user defined buttons.
+
+Examples
+-----------
+KeyDetector library comes with several annotated examples that will help get familiar with it. More detailed info on the examples (including schematic and breadboard view) available in [Wiki](https://github.com/Spirik/KeyDetector/wiki).
 
 License
 -----------
