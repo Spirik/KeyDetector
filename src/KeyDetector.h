@@ -10,7 +10,8 @@
   For documentation visit:
   https://github.com/Spirik/KeyDetector
 
-  Created by Alexander 'Spirik' Spiridonov, 11 July 2016
+  Created by Alexander 'Spirik' Spiridonov, 11 Jul 2016
+  Updated 29 Oct 2017
   
   This is free software. You can redistribute it and/or modify it under
   the terms of Creative Commons Attribution-ShareAlike 4.0 International License.
@@ -39,13 +40,14 @@ class KeyDetector {
     /* 
       @param 'keys' - array of the Key elements
       @param 'len' - length of the 'keys' array
-      @param 'analogDelay' (optional) - delay in ms to account for any transient process that may occur when adjusting the source level of analog signal;
+      @param 'debounceDelay' (optional) - delay in ms to account for any signal ripple (e.g. switch bounce) when detecting digital signal,
+      or transient process that may occur when adjusting the source level of analog signal
       default 0
       @param 'analogThreshold' (optional) - value added to and subtracted from the level value of the multiplexed Key,
-      formed range [level - analogThreshold + 1 .. level + analogThreshold - 1] is then used to detect key press event;
+      formed range [level - analogThreshold + 1 .. level + analogThreshold - 1] is then used to detect key press event
       default 16 (which allows for maximum of 32 keys multiplexed via 5-bit DAC into single analog line with 10-bit ADC on the Arduino end)
     */
-    KeyDetector(Key* keys, byte len, byte analogDelay = 0, int analogThreshold = 16);
+    KeyDetector(Key* keys, byte len, byte debounceDelay = 0, int analogThreshold = 16);
     byte trigger = KEY_NONE;    // Identifier of key being pressed (triggers ones at the beginning of press event)
     byte current = KEY_NONE;    // Identifier of key currently in pressed state
     byte previous = KEY_NONE;   // Identifier of previously pressed key
@@ -53,8 +55,8 @@ class KeyDetector {
   private:
     Key* _keys;
     byte _len;
+    byte _debounceDelay;
     int _analogThreshold;
-    byte _analogDelay;
 };
   
 #endif

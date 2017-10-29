@@ -35,7 +35,7 @@ Key keys[] = {{KEY_25, potPin, 255}, {KEY_50, potPin, 511}, {KEY_75, potPin, 767
 // Create KeyDetector object
 KeyDetector myKeyDetector(keys, sizeof(keys)/sizeof(Key), 0, 129);
 // Notes:
-// Increasing of 'analogDelay' can cause skip of detection of adjacent values if pot is rotated quickly enough, but helps
+// Increasing of 'debounceDelay' (set to 0) can cause skip of detection of adjacent values if pot is rotated quickly enough, but helps
 // to account for any transient processes or ripple that may occur during pot rotation and value readings, try value of 1
 // as an alternative to the delay set at the end of the loop().
 // Value of 'analogThreshold' is set to 129 so that there are no gaps between detection ranges of signals,
@@ -83,6 +83,6 @@ void loop() {
   }
 
   // Small delay to account for any transient processes or ripple that may occur during pot rotation and value readings.
-  // Alternatively can be adjusted through analogDelay parameter supplied to KeyDetector constructor
+  // Alternatively can be adjusted through debounceDelay parameter supplied to KeyDetector constructor
   delay(2);
 }

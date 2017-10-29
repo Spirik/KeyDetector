@@ -10,6 +10,7 @@ Can be used to detect key press events that were assigned distinctive levels of 
 * [Reference](#reference)
 * [Examples](#examples)
 * [License](#license)
+* [**Wiki**](https://github.com/Spirik/KeyDetector/wiki)
 
 When to use
 -----------
@@ -29,7 +30,7 @@ How to use
 Library format is compatible with Arduino IDE 1.5.x+. There are two ways to install the library:
 
 - Download ZIP-archive directly from [Releases](https://github.com/Spirik/KeyDetector/releases) section (or Master branch) and extract it into KeyDetector folder inside your Library folder.
-- Using Library Manager (since Arduino IDE 1.6.2): navigate to `Sketch > Include Library > Manage Libraries` inside your Arduino IDE and search for KeyDetector library then click `Install`. (Alternatively you can add previously downloaded ZIP through `Sketch > Include Library > Add .ZIP Library` menu).
+- Using Library Manager (since Arduino IDE 1.6.2): navigate to `Sketch > Include Library > Manage Libraries` inside your Arduino IDE and search for KeyDetector library, then click `Install`. (Alternatively you can add previously downloaded ZIP through `Sketch > Include Library > Add .ZIP Library` menu).
 
 Whichever option you choose you may need to reload IDE afterwards.
 
@@ -38,7 +39,7 @@ Whichever option you choose you may need to reload IDE afterwards.
 To include KeyDetector library add the following line at the top of your sketch:
 
 ```cpp
-#include "KeyDetector.h”
+#include <KeyDetector.h>
 ```
 
 ### Use
@@ -173,7 +174,7 @@ Key myKeyDigital = {KEY_ID, keyPin}; //For digital pin
 Class responsible for watching for desired level of signal to occur on specified pin. Holds current and previously detected key/signal identifier. Object of class `KeyDetector` defines as follows:
 
 ```cpp
-KeyDetector myKeyDetector(keysArray, keysArrayLength, analogDelay, analogThreshold);
+KeyDetector myKeyDetector(keysArray, keysArrayLength, debounceDelay, analogThreshold);
 ```
 
 * **keysArray**  
@@ -182,11 +183,11 @@ KeyDetector myKeyDetector(keysArray, keysArrayLength, analogDelay, analogThresho
 * **keysArrayLength**  
   *Type*: `byte`  
   Length of `keysArray`. Should be explicitly supplied because array is passed by reference. Easy way to provide array length is to calculate it using the following expression: `sizeof(keysArray)/sizeof(Key)`.
-* **analogDelay** [*optional*]  
+* **debounceDelay** [*optional*]  
   *Type*: `byte`  
   *Units*: ms  
   *Default*: `0`  
-  Delay in ms to account for any transient process that may occur when adjusting the source level of analog signal on transmitting end. Try increasing this value if you are experiencing detection of undesired adjacent signals prior to the detection of the actual signal you're sending. For example, that may be the case when you are using low-pass RC filter on transmitting end to convert PWM signal into analog (due to the temporal nature of the process).
+  Delay in ms to account for any signal ripple (e.g. switch bounce) when detecting digital signal, or transient process that may occur when adjusting the source level of analog signal on transmitting end. Try increasing this value if you are experiencing detection of undesired adjacent signals prior to the detection of the actual signal you're sending. For example, that may be the case when you are using low-pass RC filter on transmitting end to convert PWM signal into analog (due to the temporal nature of the process).
 * **analogThreshold** [*optional*]  
   *Type*: `int`  
   *Default*: `16`  

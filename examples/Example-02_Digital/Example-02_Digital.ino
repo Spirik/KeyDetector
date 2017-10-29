@@ -33,6 +33,9 @@ Key keys[] = {{KEY_A, pinA}, {KEY_B, pinB}, {KEY_C, pinC}};
 
 // Create KeyDetector object
 KeyDetector myKeyDetector(keys, sizeof(keys)/sizeof(Key));
+// To account for switch bounce effect of the buttons (if occur) you may whant to specify debounceDelay
+// as the second argument to KeyDetector constructor:
+// KeyDetector myKeyDetector(keys, sizeof(keys)/sizeof(Key), 10);
 
 void setup() {
   Serial.begin(115200);
