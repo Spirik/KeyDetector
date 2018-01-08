@@ -159,9 +159,11 @@ Key myKeyDigital = {KEY_ID, keyPin}; //For digital pin
 * **KEY_ID**  
   *Type*: `byte`  
   Identifier of the key/signal.
+
 * **keyPin**  
   *Type*: `int`  
   Pin the key is attached to.
+
 * **signalValue** [*optional*]  
   *Type*: `int`  
   *Default*: `-1`  
@@ -174,20 +176,23 @@ Key myKeyDigital = {KEY_ID, keyPin}; //For digital pin
 Class responsible for watching for desired level of signal to occur on specified pin. Holds current and previously detected key/signal identifier. Object of class `KeyDetector` defines as follows:
 
 ```cpp
-KeyDetector myKeyDetector(keysArray, keysArrayLength, debounceDelay, analogThreshold);
+KeyDetector myKeyDetector(keysArray, keysArrayLength[, debounceDelay[, analogThreshold]]);
 ```
 
 * **keysArray**  
   *Type*: `Key*` (pointer to array of type `Key`)  
   Holds the reference to an array of `Key` elements.
+
 * **keysArrayLength**  
   *Type*: `byte`  
   Length of `keysArray`. Should be explicitly supplied because array is passed by reference. Easy way to provide array length is to calculate it using the following expression: `sizeof(keysArray)/sizeof(Key)`.
+
 * **debounceDelay** [*optional*]  
   *Type*: `byte`  
   *Units*: ms  
   *Default*: `0`  
   Delay in ms to account for any signal ripple (e.g. switch bounce) when detecting digital signal, or transient process that may occur when adjusting the source level of analog signal on transmitting end. Try increasing this value if you are experiencing detection of undesired adjacent signals prior to the detection of the actual signal you're sending. For example, that may be the case when you are using low-pass RC filter on transmitting end to convert PWM signal into analog (due to the temporal nature of the process).
+
 * **analogThreshold** [*optional*]  
   *Type*: `int`  
   *Default*: `16`  
@@ -216,10 +221,12 @@ KeyDetector myKeyDetector(keysArray, keysArrayLength, debounceDelay, analogThres
   *Type*: `byte`  
   *Initial value*: `KEY_NONE`, `0`  
   Populated once per key press and holds the identifier of the button being pressed. Use it to detect key press event.
+
 * **current**  
   *Type*: `byte`  
   *Initial value*: `KEY_NONE`, `0`  
   Populated during key press and holds the identifier of the button currently being in pressed state. Unlike `trigger`, it will be populated with the key identifier not only once per button press but for the whole period of it being in this state (i.e. while signal maintains its value from the previous reading). Use it to detect key hold event.
+
 * **previous**  
   *Type*: `byte`  
   *Initial value*: `KEY_NONE`, `0`  
