@@ -22,6 +22,8 @@ Of course you may do this without any fancy library whatsoever, but KeyDetector 
 
 And it will detect state changes on the digital pins as well. See [Example 2](https://github.com/Spirik/KeyDetector/wiki/Example-02:-Digital-signal-readings) provided with the library to learn how to detect momentary push-buttons single and continuous presses.
 
+KeyDetector used as a means to detect push-buttons presses in order to navigate and interact with graphic multi-level menu in examples provided with the [GEM](https://github.com/Spirik/GEM) library.
+
 How to use
 -----------
 
@@ -240,6 +242,8 @@ KeyDetector library comes with several annotated examples that will help get fam
 
 License
 -----------
-This is free software. You can redistribute it and/or modify it under the terms of Creative Commons Attribution-ShareAlike 4.0 International License. To view a copy of this license, visit https://creativecommons.org/licenses/by-sa/4.0/.
+This library is free software; you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation; either version 3 of the License, or (at your option) any later version.
 
-[![Creative Commons Attribution-ShareAlike 4.0 International License](http://mirrors.creativecommons.org/presskit/buttons/88x31/svg/by-sa.svg)](https://creativecommons.org/licenses/by-sa/4.0/)
+This library is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License along with this library.  If not, see <http://www.gnu.org/licenses/>.
