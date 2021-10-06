@@ -10,7 +10,7 @@
   For documentation visit:
   https://github.com/Spirik/KeyDetector
 
-  Copyright (c) 2016-2018 Alexander 'Spirik' Spiridonov
+  Copyright (c) 2016-2021 Alexander 'Spirik' Spiridonov
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -46,16 +46,19 @@ struct Key {
 class KeyDetector {
   public:
     /* 
-      @param 'keys' - array of the Key elements
-      @param 'len' - length of the 'keys' array
-      @param 'debounceDelay' (optional) - delay in ms to account for any signal ripple (e.g. switch bounce) when detecting digital signal,
+      @param 'keys_' - array of the Key elements
+      @param 'len_' - length of the 'keys' array
+      @param 'debounceDelay_' (optional) - delay in ms to account for any signal ripple (e.g. switch bounce) when detecting digital signal,
       or transient process that may occur when adjusting the source level of analog signal
       default 0
-      @param 'analogThreshold' (optional) - value added to and subtracted from the level value of the multiplexed Key,
+      @param 'analogThreshold_' (optional) - value added to and subtracted from the level value of the multiplexed Key,
       formed range [level - analogThreshold + 1 .. level + analogThreshold - 1] is then used to detect key press event
       default 16 (which allows for maximum of 32 keys multiplexed via 5-bit DAC into single analog line with 10-bit ADC on the Arduino end)
+      @param 'pullup_' (optional) - whether digital pins are connected with pullup resistor (so the LOW means that button is pressed),
+      or pulldown resistor (so the HIGH means that button is pressed), default value is for pulldown resistor configuration
+      default false
     */
-    KeyDetector(Key* keys, byte len, byte debounceDelay = 0, int analogThreshold = 16);
+    KeyDetector(Key* keys_, byte len_, byte debounceDelay_ = 0, int analogThreshold_ = 16, bool pullup_ = false);
     byte trigger = KEY_NONE;    // Identifier of key being pressed (triggers ones at the beginning of press event)
     byte current = KEY_NONE;    // Identifier of key currently in pressed state
     byte previous = KEY_NONE;   // Identifier of previously pressed key
@@ -65,6 +68,7 @@ class KeyDetector {
     byte _len;
     byte _debounceDelay;
     int _analogThreshold;
+    bool _pullup;
 };
   
 #endif

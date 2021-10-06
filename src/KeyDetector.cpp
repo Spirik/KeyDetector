@@ -10,7 +10,7 @@
   For documentation visit:
   https://github.com/Spirik/KeyDetector
 
-  Copyright (c) 2016-2018 Alexander 'Spirik' Spiridonov
+  Copyright (c) 2016-2021 Alexander 'Spirik' Spiridonov
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -29,12 +29,13 @@
 #include <Arduino.h>
 #include "KeyDetector.h"
 
-KeyDetector::KeyDetector(Key* keys, byte len, byte debounceDelay, int analogThreshold) {
-  _keys = keys;
-  _len = len;
-  _debounceDelay = debounceDelay;
-  _analogThreshold = analogThreshold;
-}
+KeyDetector::KeyDetector(Key* keys_, byte len_, byte debounceDelay_, int analogThreshold_, bool pullup_)
+  : _keys(keys_)
+  , _len(len_)
+  , _debounceDelay(debounceDelay_)
+  , _analogThreshold(analogThreshold_)
+  , _pullup(pullup_)
+{ }
 
 void KeyDetector::detect() {
   previous = current;
@@ -45,7 +46,7 @@ void KeyDetector::detect() {
   while (!pressed && i != _len) {
     if (_keys[i].level > -1) {
       
-      // Detect Multiplexed keys (analog signal)
+      // Detect multiplexed keys (analog signal)
       val = analogRead(_keys[i].pin);
       if (_debounceDelay > 0 && (val > _keys[i].level-_analogThreshold && val < _keys[i].level+_analogThreshold)) {
         delay(_debounceDelay);
@@ -58,12 +59,13 @@ void KeyDetector::detect() {
     
     } else {
       
-      // Detect Solo keys (digital signal),
-      // currently works with buttons (e.g. momentary switches) wired with pulldown resistor only (so the HIGH means that button is pressed)
-      if (_debounceDelay > 0 && digitalRead(_keys[i].pin) == HIGH) {
+      // Detect single keys (digital signal),
+      // works with buttons (e.g. momentary switches) wired either with pulldown resistor (so the HIGH means that button is pressed),
+      // or with pullup resistor (so the LOW means that button is pressed)
+      if (_debounceDelay > 0 && digitalRead(_keys[i].pin) == (_pullup ? LOW : HIGH)) {
         delay(_debounceDelay);
       }
-      if (digitalRead(_keys[i].pin) == HIGH) {
+      if (digitalRead(_keys[i].pin) == (_pullup ? LOW : HIGH)) {
         current = _keys[i].code;
         pressed = true;
       }
