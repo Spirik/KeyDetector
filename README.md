@@ -171,14 +171,14 @@ Key myKeyDigital = {KEY_ID, keyPin}; //For digital pin
   *Default*: `-1`  
   Level of the analog signal at which press event of the multiplexed key is triggered. If not explicitly set by user, default value of `-1`  is assigned and key considered to be digital.
 
-> **Note:** key detection on digital pins works with `pinMode` set to `INPUT` (*not* `INPUT_PULLUP`), so the `HIGH` level of signal means that button is pressed. So, e.g., momentary switches should be wired accordingly, with pulldown resistor.
+> **Note:** since KeyDetector ver. 1.1.2 key detection on digital pins works either with `pinMode` set to `INPUT` (so the `HIGH` level of signal means that button is pressed) or `INPUT_PULLUP` (so the `LOW` level of signal means that button is pressed). So buttons (e.g. momentary switches) should be wired accordingly, either with pulldown resistor or pullup resistor (external or internal).
 
 ### KeyDetector
 
 Class responsible for watching for desired level of signal to occur on specified pin. Holds current and previously detected key/signal identifier. Object of class `KeyDetector` defines as follows:
 
 ```cpp
-KeyDetector myKeyDetector(keysArray, keysArrayLength[, debounceDelay[, analogThreshold]]);
+KeyDetector myKeyDetector(keysArray, keysArrayLength[, debounceDelay[, analogThreshold[, pullup]]]);
 ```
 
 * **keysArray**  
@@ -201,6 +201,11 @@ KeyDetector myKeyDetector(keysArray, keysArrayLength[, debounceDelay[, analogThr
   Used to form the range of values of analog signal at which press event of the multiplexed key is triggered. E.g. for the signal level of 127 the range of `[127 - analogThreshold + 1 .. 127 + analogThreshold - 1]` will be formed and any signal being in that range will trigger an event. Default value of `16` allows for up to 32 evenly spaced signal levels being multiplexed (e.g. via 5-bit DAC) into single analog line with 10-bit ADC on the receiving end.  
   Increasing this value when less then 32 different levels are required will cause signal detection (key press) event to happen earlier and be in the detection range longer. It may increase stability of detection for the signal with high level of ripple. On the contrary, decreasing `analogThreshold` may cause unreliable detection or multiple sequential detections of the unstable signal.  
   Not used for detection of keys attached to digital pins.
+
+* **pullup** [*optional*]  
+  *Type*: `bool`  
+  *Default*: `false`  
+  Boolean flag that determines whether digital pins are connected with pullup resistor (so the `LOW` means that button is pressed), or pulldown resistor (so the `HIGH` means that button is pressed). Default value `false` is for pulldown resistor configuration.
 
 #### Constants
 
