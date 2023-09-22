@@ -2,7 +2,8 @@
   Digital signal readings using KeyDetector library.
 
   Demonstrates how to use KeyDetector to trigger action based on digital signal readings from momentary push-buttons.
-  Pressing button once or keeping it in pressed state continuously will print corresponding message.
+  Pressing button once or keeping it in a pressed state continuously will print corresponding message. Pressing another
+  button in combination with the one already in a pressed state will be detected as well.
   
   Additional info (including the breadboard view) available on GitHub:
   https://github.com/Spirik/KeyDetector
@@ -34,10 +35,11 @@ Key keys[] = {{KEY_A, pinA}, {KEY_B, pinB}, {KEY_C, pinC}};
 // Create KeyDetector object
 KeyDetector myKeyDetector(keys, sizeof(keys)/sizeof(Key));
 // To account for switch bounce effect of the buttons (if occur) you may whant to specify debounceDelay
-// as the second argument to KeyDetector constructor:
-// KeyDetector myKeyDetector(keys, sizeof(keys)/sizeof(Key), 10);
+// as the third argument to KeyDetector constructor:
+// KeyDetector myKeyDetector(keys, sizeof(keys)/sizeof(Key), /* debounceDelay= */ 10);
 
 void setup() {
+  // Serial communications setup
   Serial.begin(115200);
   
   // Set button pins to input
@@ -57,22 +59,56 @@ void loop() {
   // and save current time as a time of the key press event
   switch (myKeyDetector.trigger) {
     case KEY_A:
-      Serial.println("Button A pressed!");
+      // Determine whether button A was pressed in combination with another one already in a pressed state (B or C)
+      switch (myKeyDetector.current) {
+        case KEY_B:
+          Serial.println("Button A pressed simultaneously with Button B!");
+          break;
+        case KEY_C:
+          Serial.println("Button A pressed simultaneously with Button C!");
+          break;
+        default:
+          Serial.println("Button A pressed!");
+          break;
+      }
       keyPressTime = now;
       break;
+
     case KEY_B:
-      Serial.println("Button B pressed!");
+      // Determine whether button B was pressed in combination with another one already in a pressed state (A or C)
+      switch (myKeyDetector.current) {
+        case KEY_A:
+          Serial.println("Button B pressed simultaneously with Button A!");
+          break;
+        case KEY_C:
+          Serial.println("Button B pressed simultaneously with Button C!");
+          break;
+        default:
+          Serial.println("Button B pressed!");
+          break;
+      }
       keyPressTime = now;
       break;
+
     case KEY_C:
-      Serial.println("Button C pressed!");
+      // Determine whether button C was pressed in combination with another one already in a pressed state (A or B)
+      switch (myKeyDetector.current) {
+        case KEY_A:
+          Serial.println("Button C pressed simultaneously with Button A!");
+          break;
+        case KEY_B:
+          Serial.println("Button C pressed simultaneously with Button B!");
+          break;
+        default:
+          Serial.println("Button C pressed!");
+          break;
+      }
       keyPressTime = now;
       break;
   }
 
   // After keyPressDelay passed since keyPressTime...
   if (now > keyPressTime + keyPressDelay) {
-  
     // ...determine currently pressed button (i.e. button being in a pressed state)
     // and print corresponding message, followed by keyPressRepeatDelay
     switch (myKeyDetector.current) {

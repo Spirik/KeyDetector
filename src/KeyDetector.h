@@ -7,10 +7,12 @@
   analog signal ("multiplexed" to analog signal), e.g. by usig DAC to "encode" multiple digital
   signals to a single analog line.
 
+  Allows detection of up to two simultaneously pressed keys connected to digital pins.
+
   For documentation visit:
   https://github.com/Spirik/KeyDetector
 
-  Copyright (c) 2016-2021 Alexander 'Spirik' Spiridonov
+  Copyright (c) 2016-2023 Alexander 'Spirik' Spiridonov
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -59,9 +61,12 @@ class KeyDetector {
       default false
     */
     KeyDetector(Key* keys_, byte len_, byte debounceDelay_ = 0, int analogThreshold_ = 16, bool pullup_ = false);
-    byte trigger = KEY_NONE;    // Identifier of key being pressed (triggers ones at the beginning of press event)
-    byte current = KEY_NONE;    // Identifier of key currently in pressed state
-    byte previous = KEY_NONE;   // Identifier of previously pressed key
+    byte trigger = KEY_NONE;            // Identifier of key being pressed (triggers once at the beginning of press event)
+    byte triggerRelease = KEY_NONE;     // Identifier of key being released (triggers once at the end of press event)
+    byte current = KEY_NONE;            // Identifier of key currently in pressed state
+    byte previous = KEY_NONE;           // Identifier of previously pressed key
+    byte secondary = KEY_NONE;          // Identifier of simultaneously pressed key (secondary key)
+    byte previousSecondary = KEY_NONE;  // Identifier of previously pressed secondary key
     void detect();
   private:
     Key* _keys;
