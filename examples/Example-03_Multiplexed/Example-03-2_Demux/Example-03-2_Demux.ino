@@ -43,15 +43,16 @@ KeyDetector key(keys, sizeof(keys)/sizeof(Key));
 // Note that you can increase threshold value to achieve more accurate detection (e.g. in case of high signal ripple
 // or inaccuracy of the DAC used to encode signals). To do so, use the following line instead (where 24 is the custom
 // value of threshold):
-// KeyDetector key(keys, sizeof(keys)/sizeof(Key), 0, 24);
+// KeyDetector key(keys, sizeof(keys)/sizeof(Key), /* debounceDelay= */ 0, /* analogThreshold= */ 24);
 // Additionally you can specify debounceDelay value to account for any transient process that may occur when adjusting
 // the source level of analog signal:
-// KeyDetector key(keys, sizeof(keys)/sizeof(Key), 5, 24);
+// KeyDetector key(keys, sizeof(keys)/sizeof(Key), /* debounceDelay= */ 5, /* analogThreshold= */ 24);
 
 void setup() {
   // Configure the reference voltage used for analog input (i.e. the value used as the top of the input range)
   analogReference(EXTERNAL);
-  
+
+  // Serial communications setup
   Serial.begin(115200);
 
   // Set signal pins to input

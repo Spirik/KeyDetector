@@ -3,11 +3,17 @@ KeyDetector
 
 Arduino library for detecting state change on analog and digital pins. Listens for specified values on the analog input and sets `KeyDetector` object state accordingly. Detects digital pin state change as well.
 
+![KeyDetector](https://github.com/Spirik/KeyDetector/wiki/images/KeyDetector_hero.png)
+
 Can be used to detect key press events that were assigned distinctive levels of the single analog signal ("multiplexed" to analog signal), e.g. by using DAC to "encode" multiple digital signals to a single analog line.
 
-* [When to Use](#when-to-use)
-* [How to Use](#how-to-use)
+Allows detection of up to two simultaneously pressed keys connected to digital pins (since version 1.2.0).
+
+* [When to use](#when-to-use)
+* [How to use](#how-to-use)
 * [Reference](#reference)
+* [Simultaneous presses](#simultaneous-presses)
+* [Timing diagrams](#timing-diagrams)
 * [Examples](#examples)
 * [License](#license)
 * [**Wiki**](https://github.com/Spirik/KeyDetector/wiki)
@@ -16,11 +22,13 @@ When to use
 -----------
 E.g. if you find yourself in a situation when you need to execute some code based on values passed through single analog input. You may want to do that in case if you are running low on a free pin budget, but still need a way to receive multiple control signals from another Arduino (and don’t want to use Serial or another interface for some reason). Then you use simplest DAC on the end of transmitting Arduino and multiplex the encoded control signals into single analog signal that will be decoded on the receiving Arduino. See [Example 3](https://github.com/Spirik/KeyDetector/wiki/Example-03:-Multiplexed-signal-readings) provided with the library to learn how to multiplex digital signals and demultiplex them back using KeyDetector.
 
-And since nature of the analog signal isn’t important for the library, you may use it to detect specific values of any analog source you connect to Arduino, be it some sensor or simple potentiometer. That way you may execute some code based on, e.g., temperature readings of the sensor or rotation of the knob. See [Example 1](https://github.com/Spirik/KeyDetector/wiki/Example-01:-Analog-signal-readings) provided with the library to learn how to build  absolute rotary encoder using potentiometer and KeyDetector library.
+And since origin of the analog signal isn’t important for the library, you may use it to detect specific values of any analog source you connect to Arduino, be it some sensor or simple potentiometer. That way you may execute some code based on, e.g., temperature readings of the sensor or rotation of the knob. See [Example 1](https://github.com/Spirik/KeyDetector/wiki/Example-01:-Analog-signal-readings) provided with the library to learn how to build  absolute rotary encoder using potentiometer and KeyDetector library.
 
 Of course you may do this without any fancy library whatsoever, but KeyDetector will provide you with convenient way of tracking previous reading and executing desired code once per signal change (i.e. once per key press, ignoring the duration of it being in a pressed state).
 
-And it will detect state changes on the digital pins as well. See [Example 2](https://github.com/Spirik/KeyDetector/wiki/Example-02:-Digital-signal-readings) provided with the library to learn how to detect momentary push-buttons single and continuous presses.
+And it will detect state changes on the digital pins as well. See [Example 2](https://github.com/Spirik/KeyDetector/wiki/Example-02:-Digital-signal-readings) provided with the library to learn how to detect momentary push-buttons single, continuous and simultaneous presses.
+
+[Example 4](https://github.com/Spirik/KeyDetector/wiki/Example-04:-Rotary-encoder) shows how to use KeyDetector with rotary encoder equipped with push-button to determine rotation of the knob and simultaneous presses of the button.
 
 KeyDetector used as a means to detect push-buttons presses in order to navigate and interact with graphic multi-level menu in examples provided with the [GEM](https://github.com/Spirik/GEM) library.
 
@@ -227,19 +235,63 @@ KeyDetector myKeyDetector(keysArray, keysArrayLength[, debounceDelay[, analogThr
 * **trigger**  
   *Type*: `byte`  
   *Initial value*: `KEY_NONE`, `0`  
-  Populated once per key press and holds the identifier of the button being pressed. Use it to detect key press event.
+  Populated once per key press (at the beginning of press event) with the identifier of the button being pressed. Use it to detect key press event (both primary and secondary).
+
+* **triggerRelease**  
+  *Type*: `byte`  
+  *Initial value*: `KEY_NONE`, `0`  
+  Populated once per key press (at the end of press event) with the identifier of the button being released. Use it to detect key release event (both primary and secondary).
 
 * **current**  
   *Type*: `byte`  
   *Initial value*: `KEY_NONE`, `0`  
-  Populated during key press and holds the identifier of the button currently being in pressed state. Unlike `trigger`, it will be populated with the key identifier not only once per button press but for the whole period of it being in this state (i.e. while signal maintains its value from the previous reading). Use it to detect key hold event.
+  Populated during key press and holds the identifier of the primary button currently being in pressed state. Unlike `trigger` and `triggerRelease`, it will be populated with the key identifier not only once per button press but for the whole period of it being in this state (i.e. while signal maintains its value from the previous reading). Use it to detect primary key hold event.
 
 * **previous**  
   *Type*: `byte`  
   *Initial value*: `KEY_NONE`, `0`  
-  Holds the identifier of the button that was pressed when `detect()` method was previously called.
+  Holds the identifier of the primary button that was pressed when `detect()` method was previously called.
 
-> Each of these properties (`trigger`, `current`, `previous`) ends up storing value of `KEY_NONE` when no press events are detected for user defined buttons.
+* **secondary**  
+  *Type*: `byte`  
+  *Initial value*: `KEY_NONE`, `0`  
+  Populated during key press and holds the identifier of the secondary button currently being in pressed state. Unlike `trigger` and `triggerRelease`, it will be populated with the key identifier not only once per button press but for the whole period of it being in this state (i.e. while signal maintains its value from the previous reading). Use it to detect secondary key hold event or simultaneously pressed combinations of two keys (primary and secondary).
+
+* **previousSecondary**  
+  *Type*: `byte`  
+  *Initial value*: `KEY_NONE`, `0`  
+  Holds the identifier of the secondary button that was pressed when `detect()` method was previously called.
+
+> Each of these properties (`trigger`, `triggerRelease`, `current`, `previous`, `secondary`, `previousSecondary`) ends up storing value of `KEY_NONE` when no press events are detected for user defined buttons.
+
+Simultaneous presses
+-----------
+Since version 1.2.0 it is possible to detect simultaneous presses of two keys connected to digital pins. In that case first pressed key considered to be "primary" (with its identifier stored in `current` property) and the second key - "secondary" (with its identifier stored in `secondary` property).
+
+Simultaneous presses detection has limited support for the case when analog and digital signal detection mixed in the same Keys array passed to the constructor. As a result, analog readings are detected as a primary key press (stored in `current` property) if no other primary key presses were detected, and can not be detected as a secondary key press (stored in `secondary` property). When digital Key objects present in the same Keys array as analog Key objects, they will be detected either as primary (when placed before analog Key objects in constructor) or secondary (when placed after analog Key objects in constructor).
+
+Timing diagrams
+-----------
+
+For the following diagrams, consider you have two push-buttons (with identifiers `KEY_A` and `KEY_B` associated with them) wired with pull-down resistors (so the `HIGH` level of signal means that button is pressed). For the case of buttons wired with pull-up resistors (so the `LOW` level of signal means that button is pressed) just assume the signal levels inverted on the rows corresponding for each key.
+
+Marks on the X axis indicate points in time when call to `detect()` method was made (generally it will happen once per sketch `loop()` iteration). Top rows, named `KEY_A` and `KEY_B`, show key state (in this case signal level of pin that button is connected to). Other rows show value of corresponding property of KeyDetector object.
+
+### Single key press
+
+Button `KEY_A` pressed, held for some time and then released:
+
+![Single key press](https://github.com/Spirik/KeyDetector/wiki/images/KeyDetector_timing-diagram_01.png)
+
+### Simultaneous key presses
+
+Button `KEY_A` pressed, then button `KEY_B` pressed, then the buttons released in reverse order:
+
+![Simultaneous key presses 1](https://github.com/Spirik/KeyDetector/wiki/images/KeyDetector_timing-diagram_02.png)
+
+Button `KEY_A` pressed, then button `KEY_B` pressed, then the buttons released in the same order:
+
+![Simultaneous key presses 2](https://github.com/Spirik/KeyDetector/wiki/images/KeyDetector_timing-diagram_03.png)
 
 Examples
 -----------

@@ -33,7 +33,7 @@ char* state; // Variable to hold string describing direction of rotation
 Key keys[] = {{KEY_25, potPin, 255}, {KEY_50, potPin, 511}, {KEY_75, potPin, 767}, {KEY_100, potPin, 1023}};
 
 // Create KeyDetector object
-KeyDetector myKeyDetector(keys, sizeof(keys)/sizeof(Key), 0, 129);
+KeyDetector myKeyDetector(keys, sizeof(keys)/sizeof(Key), /* debounceDelay= */ 0, /* analogThreshold= */ 129);
 // Notes:
 // Increasing of 'debounceDelay' (set to 0) can cause skip of detection of adjacent values if pot is rotated quickly enough, but helps
 // to account for any transient processes or ripple that may occur during pot rotation and value readings, try value of 1
@@ -44,6 +44,7 @@ KeyDetector myKeyDetector(keys, sizeof(keys)/sizeof(Key), 0, 129);
 // press event of KEY_25, because its Key object was placed before Key object of KEY_50 in the keys[] array
 
 void setup() {
+  // Serial communications setup
   Serial.begin(115200);
   
   // Set potPin to input
