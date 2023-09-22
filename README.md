@@ -275,7 +275,7 @@ Timing diagrams
 
 For the following diagrams, consider you have two push-buttons (with identifiers `KEY_A` and `KEY_B` associated with them) wired with pull-down resistors (so the `HIGH` level of signal means that button is pressed). For the case of buttons wired with pull-up resistors (so the `LOW` level of signal means that button is pressed) just assume the signal levels inverted on the rows corresponding for each key.
 
-Marks on the X axis designates points in time when call to `detect()` method were made (generally it will happen once per sketch `loop()` iteration).
+Marks on the X axis indicate points in time when call to `detect()` method was made (generally it will happen once per sketch `loop()` iteration). Top rows, named `KEY_A` and `KEY_B`, show key state (in this case signal level of pin that button is connected to). Other rows show value of corresponding property of KeyDetector object.
 
 ### Single key press
 
