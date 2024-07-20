@@ -37,10 +37,11 @@ How to use
 
 ### Install
 
-Library format is compatible with Arduino IDE 1.5.x+. There are two ways to install the library:
+Library format is compatible with Arduino IDE 1.5.x+. There are number of ways to install the library:
 
 - Download ZIP-archive directly from [Releases](https://github.com/Spirik/KeyDetector/releases) section (or Master branch) and extract it into KeyDetector folder inside your Library folder.
 - Using Library Manager (since Arduino IDE 1.6.2): navigate to `Sketch > Include Library > Manage Libraries` inside your Arduino IDE and search for KeyDetector library, then click `Install`. (Alternatively you can add previously downloaded ZIP through `Sketch > Include Library > Add .ZIP Library` menu).
+- Using Library Manager in Arduino IDE 2: see [documentation](https://docs.arduino.cc/software/ide-v2/tutorials/ide-v2-installing-a-library) for details.
 
 Whichever option you choose you may need to reload IDE afterwards.
 
