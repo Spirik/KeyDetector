@@ -12,7 +12,7 @@
 
  #include <KeyDetector.h>
 
-// Define signal identifiers for three outputs of encoder (channel A, channel B and a push-button)
+// Define signal identifiers for three outputs of encoder (Channel A, Channel B and a push-button)
 #define KEY_A 1
 #define KEY_B 2
 #define KEY_C 3
@@ -21,6 +21,8 @@
 const byte channelA = 2;
 const byte channelB = 3;
 const byte buttonPin = 4;
+
+byte chanB = HIGH; // Variable to store Channel B readings
 
 // Array of Key objects that will link GEM key identifiers with dedicated pins
 // (it is only necessary to detect signal change on a single channel of the encoder, either A or B;
@@ -35,7 +37,7 @@ Key keys[] = {{KEY_A, channelA}, {KEY_C, buttonPin}};
 // Make sure to adjust debounce delay to better fit your rotary encoder.
 // Also it is possible to enable pull-up mode when buttons wired with pull-up resistors (as in this case).
 // Analog threshold is not necessary for this example and is set to default value 16.
-KeyDetector myKeyDetector(keys, sizeof(keys)/sizeof(Key), /* debounceDelay= */ 5, /* analogThreshold= */ 16, /* pullup= */ true);
+KeyDetector myKeyDetector(keys, sizeof(keys)/sizeof(Key), /* debounceDelay= */ 3, /* analogThreshold= */ 16, /* pullup= */ true);
 
 void setup() {
   // Serial communications setup
@@ -51,25 +53,28 @@ void setup() {
 }
 
 void loop() {
+  // Reading Channel B signal beforehand to account for possible delays due to polling nature of KeyDetector inner algorithm
+  chanB = digitalRead(channelB);
+
   myKeyDetector.detect();
   
-  // Press event (e.g. when button was pressed or channel A signal chaged to HIGH)
+  // Press event (e.g. when button was pressed or Channel A signal chaged to HIGH)
   switch (myKeyDetector.trigger) {
     case KEY_A:
-      //Signal from Channel A of encoder was detected
-      if (digitalRead(channelB) == LOW) {
-        // If channel B is LOW then the knob was rotated CW
-        if (myKeyDetector.current == KEY_C) {
-          Serial.println("Rotation CW with button pressed");
-        } else {
-          Serial.println("Rotation CW");
-        }
-      } else {
-        // If channel B is HIGH then the knob was rotated CCW
+      // Signal from Channel A of encoder was detected
+      if (chanB == LOW) {
+        // If Channel B is LOW then the knob was rotated CCW
         if (myKeyDetector.current == KEY_C) {
           Serial.println("Rotation CCW with button pressed");
         } else {
           Serial.println("Rotation CCW");
+        }
+      } else {
+        // If Channel B is HIGH then the knob was rotated CW
+        if (myKeyDetector.current == KEY_C) {
+          Serial.println("Rotation CW with button pressed");
+        } else {
+          Serial.println("Rotation CW");
         }
       }
       break;
@@ -79,23 +84,23 @@ void loop() {
       break;
   }
   
-  // Release event (e.g. when button was released or channel A signal changed to LOW)
+  // Release event (e.g. when button was released or Channel A signal changed to LOW)
   switch (myKeyDetector.triggerRelease) {
     case KEY_A:
-      //Signal from Channel A of encoder was detected
-      if (digitalRead(channelB) == LOW) {
-        // If channel B is LOW then the knob was rotated CCW
-        if (myKeyDetector.current == KEY_C) {
-          Serial.println("Rotation CCW with button pressed (release)");
-        } else {
-          Serial.println("Rotation CCW (release)");
-        }
-      } else {
-        // If channel B is HIGH then the knob was rotated CW
+      // Signal from Channel A of encoder was detected
+      if (chanB == LOW) {
+        // If Channel B is LOW then the knob was rotated CW
         if (myKeyDetector.current == KEY_C) {
           Serial.println("Rotation CW with button pressed (release)");
         } else {
           Serial.println("Rotation CW (release)");
+        }
+      } else {
+        // If Channel B is HIGH then the knob was rotated CCW
+        if (myKeyDetector.current == KEY_C) {
+          Serial.println("Rotation CCW with button pressed (release)");
+        } else {
+          Serial.println("Rotation CCW (release)");
         }
       }
       break;
