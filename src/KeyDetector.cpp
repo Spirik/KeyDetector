@@ -52,24 +52,27 @@ void KeyDetector::detect() {
     if (_keys[i].level > -1) {
       
       // Detect multiplexed keys (analog signal)
-      val = analogRead(_keys[i].pin);
-      if (_debounceDelay > 0 && (val > _keys[i].level-_analogThreshold && val < _keys[i].level+_analogThreshold)) {
-        delay(_debounceDelay);
+      // Note: Analog reading is not supported for I2C expanders, only direct pins
+      if (_keys[i].ioType == KEY_IO_TYPE_DIRECT) {
         val = analogRead(_keys[i].pin);
-      }
-      if (val > _keys[i].level-_analogThreshold && val < _keys[i].level+_analogThreshold) {
-        // Support for simultaneous detection of analog readings may lead to unstable triggers when detection ranges
-        // of analog signal are close or overlapping, hence disabling for now. As a result, analog readings are
-        // detected as a primary key press (stored in 'current') if no other primary key presses were detected,
-        // and can not be detected as a secondary key press (stored in 'secondary').
-        // When digital Key objects present in the same Keys array as analog Key objects, they will be detected either
-        // as primary (when placed before analog Key objects in constructor) or secondary (when placed after analog Key
-        // objects in constructor).
-        if (!firstKey) {
-          firstKey = _keys[i].code;
-        }/* else {
-          secondKey = _keys[i].code;
-        } */
+        if (_debounceDelay > 0 && (val > _keys[i].level-_analogThreshold && val < _keys[i].level+_analogThreshold)) {
+          delay(_debounceDelay);
+          val = analogRead(_keys[i].pin);
+        }
+        if (val > _keys[i].level-_analogThreshold && val < _keys[i].level+_analogThreshold) {
+          // Support for simultaneous detection of analog readings may lead to unstable triggers when detection ranges
+          // of analog signal are close or overlapping, hence disabling for now. As a result, analog readings are
+          // detected as a primary key press (stored in 'current') if no other primary key presses were detected,
+          // and can not be detected as a secondary key press (stored in 'secondary').
+          // When digital Key objects present in the same Keys array as analog Key objects, they will be detected either
+          // as primary (when placed before analog Key objects in constructor) or secondary (when placed after analog Key
+          // objects in constructor).
+          if (!firstKey) {
+            firstKey = _keys[i].code;
+          }/* else {
+            secondKey = _keys[i].code;
+          } */
+        }
       }
     
     } else {
@@ -77,10 +80,26 @@ void KeyDetector::detect() {
       // Detect single keys (digital signal),
       // works with buttons (e.g. momentary switches) wired either with pulldown resistor (so the HIGH means that button is pressed),
       // or with pullup resistor (so the LOW means that button is pressed)
-      if (_debounceDelay > 0 && digitalRead(_keys[i].pin) == (_pullup ? LOW : HIGH)) {
-        delay(_debounceDelay);
+      bool pinState;
+      
+      if (_keys[i].ioType == KEY_IO_TYPE_DIRECT) {
+        // Read from direct Arduino pin
+        if (_debounceDelay > 0 && digitalRead(_keys[i].pin) == (_pullup ? LOW : HIGH)) {
+          delay(_debounceDelay);
+        }
+        pinState = digitalRead(_keys[i].pin) == (_pullup ? LOW : HIGH);
+      } else if (_keys[i].ioType == KEY_IO_TYPE_I2C_EXPANDER && _keys[i].expander != nullptr) {
+        // Read from I2C expander pin
+        if (_debounceDelay > 0 && _keys[i].expander->digitalRead(_keys[i].pin) == (_pullup ? LOW : HIGH)) {
+          delay(_debounceDelay);
+        }
+        pinState = _keys[i].expander->digitalRead(_keys[i].pin) == (_pullup ? LOW : HIGH);
+      } else {
+        // Unsupported IO type or null expander
+        pinState = false;
       }
-      if (digitalRead(_keys[i].pin) == (_pullup ? LOW : HIGH)) {
+      
+      if (pinState) {
         if (!firstKey) {
           firstKey = _keys[i].code;
         } else {

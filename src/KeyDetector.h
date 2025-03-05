@@ -34,14 +34,31 @@
 #include <Arduino.h>
 
 #define KEY_NONE 0
+#define KEY_IO_TYPE_DIRECT 0
+#define KEY_IO_TYPE_I2C_EXPANDER 1
+
+// Forward declaration for I2C expander interface
+class I2CExpander;
 
 // Declaration of Key element type
 struct Key {
-  Key(byte c, int p, int l = -1) : code(c), pin(p), level(l) {}
+  Key(byte c, int p, int l = -1, byte t = KEY_IO_TYPE_DIRECT, I2CExpander* e = nullptr) 
+    : code(c), pin(p), level(l), ioType(t), expander(e) {}
   byte code;  // Identifier of the key
   int pin;    // Pin the key is attached to
   int level;  // Level of the analog signal at which press event of the multiplexed key is triggered
               // (if not explicitly set - default value of -1 is assigned and key considered to be digital)
+  byte ioType; // Type of IO connection: direct (KEY_IO_TYPE_DIRECT) or via I2C expander (KEY_IO_TYPE_I2C_EXPANDER)
+  I2CExpander* expander; // Pointer to the I2C expander object if ioType is KEY_IO_TYPE_I2C_EXPANDER
+};
+
+// Abstract class for I2C expander interface
+class I2CExpander {
+  public:
+    virtual bool begin() = 0;
+    virtual void pinMode(uint8_t pin, uint8_t mode) = 0;
+    virtual void digitalWrite(uint8_t pin, uint8_t val) = 0;
+    virtual int digitalRead(uint8_t pin) = 0;
 };
 
 // Declaration of KeyDetector class
